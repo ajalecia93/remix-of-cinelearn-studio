@@ -2,19 +2,80 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check, Loader2 } from "lucide-react";
+import { useAuth, AppRole } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"student" | "creator">("student");
+  const [role, setRole] = useState<AppRole>("student");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration
+    setErrors({});
+
+    // Validate input
+    const result = registerSchema.safeParse({ name, email, password });
+    if (!result.success) {
+      const fieldErrors: { name?: string; email?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "name") fieldErrors.name = err.message;
+        if (err.path[0] === "email") fieldErrors.email = err.message;
+        if (err.path[0] === "password") fieldErrors.password = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await signUp(email, password, name, role);
+
+    if (error) {
+      setIsLoading(false);
+      let message = "An error occurred during registration.";
+
+      if (error.message.includes("already registered")) {
+        message = "This email is already registered. Please sign in instead.";
+      } else if (error.message.includes("invalid")) {
+        message = "Please check your email and password format.";
+      }
+
+      toast({
+        title: "Registration failed",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Account created!",
+      description: "Welcome to GSDT. Let's start your journey.",
+    });
+
+    // Redirect based on role
+    const dashboardPath = role === "creator" ? "/creator/dashboard" : "/student/dashboard";
+    setTimeout(() => {
+      navigate(dashboardPath, { replace: true });
+    }, 100);
   };
 
   return (
@@ -38,7 +99,8 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                disabled={isLoading}
+                className={`p-4 rounded-xl border-2 transition-all duration-300 text-left disabled:opacity-50 ${
                   role === "student"
                     ? "border-primary bg-primary/10"
                     : "border-border hover:border-muted-foreground"
@@ -58,7 +120,8 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRole("creator")}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                disabled={isLoading}
+                className={`p-4 rounded-xl border-2 transition-all duration-300 text-left disabled:opacity-50 ${
                   role === "creator"
                     ? "border-primary bg-primary/10"
                     : "border-border hover:border-muted-foreground"
@@ -92,9 +155,13 @@ export default function RegisterPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
+                    disabled={isLoading}
+                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground disabled:opacity-50"
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-sm text-destructive mt-1">{errors.name}</p>
+                )}
               </div>
 
               {/* Email */}
@@ -110,9 +177,13 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
+                    disabled={isLoading}
+                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground disabled:opacity-50"
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive mt-1">{errors.email}</p>
+                )}
               </div>
 
               {/* Password */}
@@ -128,25 +199,39 @@ export default function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full h-12 pl-12 pr-12 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground"
+                    disabled={isLoading}
+                    className="w-full h-12 pl-12 pr-12 rounded-xl bg-muted/50 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground placeholder:text-muted-foreground disabled:opacity-50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={isLoading}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive mt-1">{errors.password}</p>
+                )}
                 <p className="text-xs text-muted-foreground mt-2">
                   Must be at least 8 characters
                 </p>
               </div>
 
               {/* Submit */}
-              <Button type="submit" variant="hero" size="lg" className="w-full">
-                Create Account
-                <ArrowRight className="w-4 h-4" />
+              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </Button>
             </form>
 
