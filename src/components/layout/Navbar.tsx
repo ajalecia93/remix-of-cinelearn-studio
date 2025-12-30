@@ -78,7 +78,7 @@ export function Navbar() {
             <Play className="w-5 h-5 text-primary-foreground fill-current" />
           </div>
           <span className="font-display text-xl font-bold tracking-tight">
-            <span className="text-gradient-primary">GSDT</span>
+            <span className="text-gradient-primary">Georgia School of Design & Technology</span>
           </span>
         </Link>
 

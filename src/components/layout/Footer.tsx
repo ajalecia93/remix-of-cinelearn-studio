@@ -47,7 +47,7 @@ export function Footer() {
                 <Play className="w-5 h-5 text-primary-foreground fill-current" />
               </div>
               <span className="font-display text-xl font-bold">
-                <span className="text-gradient-primary">GSDT</span>
+                <span className="text-gradient-primary">Georgia School of Design & Technology</span>
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-xs">
@@ -136,7 +136,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} GSDT Platform. All rights reserved.
+            © {new Date().getFullYear()} Georgia School of Design & Technology. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
             Made with passion for learners worldwide

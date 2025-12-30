@@ -54,7 +54,7 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-lg text-muted-foreground mb-8 animate-fade-up stagger-2">
-              GSDT Platform was born from a simple idea: what if learning felt as engaging 
+              Georgia School of Design & Technology was born from a simple idea: what if learning felt as engaging 
               as watching your favorite show? We're building the Netflix of education, 
               where every lesson is a cinematic experience.
             </p>
