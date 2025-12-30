@@ -69,7 +69,7 @@ export default function RegisterPage() {
 
     toast({
       title: "Account created!",
-      description: "Welcome to GSDT. Let's start your journey.",
+      description: "Welcome to Georgia School of Design & Technology. Let's start your journey.",
     });
 
     // Redirect based on role
