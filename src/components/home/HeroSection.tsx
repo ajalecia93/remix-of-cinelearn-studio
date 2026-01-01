@@ -1,12 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Play, Sparkles, Users, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import heroBackground from "@/assets/hero-background.png";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-hero-gradient" />
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      />
+      {/* Dark Overlay for text readability */}
+      <div className="absolute inset-0 bg-background/70" />
       
       {/* Animated Gradient Orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] animate-pulse" />
