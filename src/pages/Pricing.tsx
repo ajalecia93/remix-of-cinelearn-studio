@@ -36,7 +36,7 @@ const plans = [
   },
   {
     name: "Enterprise",
-    price: "Custom",
+    price: "$199",
     description: "For teams and organizations",
     features: [
       "All Pro features",
