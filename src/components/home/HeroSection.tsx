@@ -101,6 +101,29 @@ function MobileHero() {
           autoPlay
           playsInline
         />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-background/60" />
+        
+        {/* Mobile text content */}
+        <div className="absolute inset-0 flex flex-col justify-center px-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4 animate-fade-up">
+            Curated by Industry Experts
+          </p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold leading-[1.1] mb-6 animate-fade-up stagger-1 text-foreground">
+            Premier online
+            <br />
+            learning platform.
+          </h1>
+          <div className="animate-fade-up stagger-2">
+            <Link
+              to="/explore"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-wider font-semibold px-6 py-3 text-sm rounded-md transition-colors"
+            >
+              Get Started
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
