@@ -116,7 +116,7 @@ function MobileHero() {
           </h1>
           <div className="animate-fade-up stagger-2">
             <Link
-              to="/explore"
+              to="/start-journey"
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-wider font-semibold px-6 py-3 text-sm rounded-md transition-colors"
             >
               Get Started
@@ -194,7 +194,7 @@ export function HeroSection() {
           </h1>
           <div className="animate-fade-up stagger-2">
             <Link
-              to="/explore"
+              to="/start-journey"
               className="inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-wider font-semibold px-8 py-4 text-sm rounded-md transition-colors"
             >
               Get Started
