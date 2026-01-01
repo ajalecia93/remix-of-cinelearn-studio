@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,12 +21,19 @@ export default function LoginPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const { signIn, signInWithGoogle, role } = useAuth();
+  const { signIn, signInWithGoogle, role, user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
   const from = location.state?.from?.pathname || getDashboardPath(role);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate(getDashboardPath(role), { replace: true });
+    }
+  }, [user, loading, role, navigate]);
 
   function getDashboardPath(userRole: string | null): string {
     switch (userRole) {
