@@ -1,86 +1,198 @@
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroBackground from "@/assets/hero-background.png";
+import { useRef, useEffect } from "react";
+
+const videoCards = [
+  {
+    id: 1,
+    video: "/videos/fashion.mp4",
+    tag: "JAN 2025 ONLINE • LIVE",
+    school: "SCHOOL OF FASHION",
+    course: "Intro to Fashion Design",
+    offset: false,
+  },
+  {
+    id: 2,
+    video: "/videos/filmmaking.mp4",
+    tag: "APPLY FOR SPRING 2025",
+    school: "SCHOOL OF FILM",
+    course: "Intro to Filmmaking",
+    offset: true,
+  },
+  {
+    id: 3,
+    video: "/videos/tech.mp4",
+    tag: "NOW OPEN",
+    school: "SCHOOL OF TECHNOLOGY",
+    course: "Software Engineering",
+    offset: false,
+  },
+  {
+    id: 4,
+    video: "/videos/midjourney.mp4",
+    tag: "SEPT 26, 2025 ONLINE • LIVE",
+    school: "AI VISUAL LABS",
+    course: "Midjourney & AI",
+    offset: true,
+  },
+];
+
+function VideoCard({ card }: { card: typeof videoCards[0] }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleMouseEnter = () => {
+    videoRef.current?.play();
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <article
+      className={`group relative flex-shrink-0 w-[423px] h-[580px] overflow-hidden rounded-lg bg-background ${
+        card.offset ? "mt-12" : ""
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <video
+        ref={videoRef}
+        src={card.video}
+        className="w-full h-full object-cover pointer-events-none"
+        muted
+        loop
+        preload="metadata"
+      />
+
+      <div className="hidden md:flex flex-col justify-end absolute inset-0 p-8 bg-gradient-to-t from-background/90 via-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <h3 className="text-xs uppercase tracking-[0.2em] text-primary mt-auto">
+          {card.tag}
+        </h3>
+        <p className="text-xl font-semibold mt-2 text-foreground">
+          {card.school}
+        </p>
+        <Link
+          to="/explore"
+          className="flex items-center mt-4 text-lg font-semibold group/link text-foreground"
+        >
+          <span>{card.course}</span>
+          <span className="text-primary ml-4 transform transition group-hover/link:translate-x-2">
+            <ArrowRight className="w-6 h-6" />
+          </span>
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function MobileHero() {
+  return (
+    <div className="md:hidden w-full">
+      <div className="relative bg-background" style={{ height: "calc(100vh - 88px)" }}>
+        <video
+          src="/videos/fashion.mp4"
+          className="w-full h-full object-cover"
+          muted
+          loop
+          autoPlay
+          playsInline
+        />
+      </div>
+    </div>
+  );
+}
 
 export function HeroSection() {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Auto-scroll functionality for desktop
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    let animationId: number;
+    let scrollSpeed = 0.5;
+
+    const autoScroll = () => {
+      if (scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth) {
+        scroller.scrollLeft = 0;
+      } else {
+        scroller.scrollLeft += scrollSpeed;
+      }
+      animationId = requestAnimationFrame(autoScroll);
+    };
+
+    const handleMouseEnter = () => {
+      cancelAnimationFrame(animationId);
+    };
+
+    const handleMouseLeave = () => {
+      animationId = requestAnimationFrame(autoScroll);
+    };
+
+    scroller.addEventListener("mouseenter", handleMouseEnter);
+    scroller.addEventListener("mouseleave", handleMouseLeave);
+
+    animationId = requestAnimationFrame(autoScroll);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      scroller.removeEventListener("mouseenter", handleMouseEnter);
+      scroller.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-      />
-      {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-background/80" />
-      
-      {/* Subtle Gradient Orb */}
-      <div className="absolute top-1/3 left-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
+      {/* Mobile View */}
+      <MobileHero />
 
-      <div className="container-cinematic relative z-10 py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Text Content */}
-          <div className="text-left">
-            {/* Eyebrow Text */}
-            <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-muted-foreground mb-6 animate-fade-up">
-              Curated by Industry Experts
-            </p>
+      {/* Desktop View */}
+      <div className="hidden md:flex relative w-full">
+        {/* Left gradient fade */}
+        <div className="pointer-events-none absolute left-0 top-0 z-30 h-full w-32 bg-gradient-to-r from-background via-background/70 to-transparent" />
 
-            {/* Headline */}
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-8 animate-fade-up stagger-1">
-              Premier online
-              <br />
-              learning platform.
-            </h1>
+        {/* Right gradient fade */}
+        <div className="pointer-events-none absolute right-0 top-0 z-30 h-full w-96 bg-gradient-to-l from-background via-background/50 to-transparent" />
 
-            {/* CTA Button */}
-            <div className="animate-fade-up stagger-2">
-              <Link to="/explore">
-                <Button 
-                  size="xl" 
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-wider font-semibold px-10 py-6 text-base"
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
+        {/* Hero Text Overlay */}
+        <div className="absolute left-0 top-0 z-20 h-full flex flex-col justify-center pl-8 lg:pl-16 max-w-xl">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6 animate-fade-up">
+            Curated by Industry Experts
+          </p>
+          <h1 className="font-display text-4xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] mb-8 animate-fade-up stagger-1 text-foreground">
+            Premier online
+            <br />
+            learning platform.
+          </h1>
+          <div className="animate-fade-up stagger-2">
+            <Link
+              to="/explore"
+              className="inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-wider font-semibold px-8 py-4 text-sm rounded-md transition-colors"
+            >
+              Get Started
+              <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
+        </div>
 
-          {/* Right Column - Feature Cards */}
-          <div className="hidden lg:flex flex-col gap-6 animate-fade-up stagger-3">
-            {/* Featured Course Card */}
-            <div className="bg-card/50 backdrop-blur-sm border border-border/30 rounded-lg p-6 hover:border-primary/30 transition-colors">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Now Enrolling • Online
-              </p>
-              <p className="text-sm font-medium text-foreground/80 mb-3">
-                School of Design
-              </p>
-              <Link 
-                to="/explore" 
-                className="inline-flex items-center gap-2 text-primary text-sm font-medium group"
-              >
-                <span>Explore Courses</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-card/30 backdrop-blur-sm rounded-lg border border-border/20">
-                <span className="text-2xl md:text-3xl font-display font-bold text-foreground">50K+</span>
-                <p className="text-xs text-muted-foreground mt-1">Students</p>
-              </div>
-              <div className="text-center p-4 bg-card/30 backdrop-blur-sm rounded-lg border border-border/20">
-                <span className="text-2xl md:text-3xl font-display font-bold text-foreground">200+</span>
-                <p className="text-xs text-muted-foreground mt-1">Courses</p>
-              </div>
-              <div className="text-center p-4 bg-card/30 backdrop-blur-sm rounded-lg border border-border/20">
-                <span className="text-2xl md:text-3xl font-display font-bold text-foreground">95%</span>
-                <p className="text-xs text-muted-foreground mt-1">Satisfaction</p>
-              </div>
-            </div>
-          </div>
+        {/* Scrolling Video Cards */}
+        <div
+          ref={scrollerRef}
+          className="flex items-start gap-4 overflow-x-auto pl-[400px] lg:pl-[500px] pr-4 py-8 no-scrollbar"
+          style={{ scrollBehavior: "auto" }}
+        >
+          {videoCards.map((card) => (
+            <VideoCard key={card.id} card={card} />
+          ))}
+          {/* Duplicate cards for infinite scroll effect */}
+          {videoCards.map((card) => (
+            <VideoCard key={`dup-${card.id}`} card={card} />
+          ))}
         </div>
       </div>
 
