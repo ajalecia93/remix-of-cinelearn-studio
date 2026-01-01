@@ -16,6 +16,9 @@ import StudentDashboard from "./pages/StudentDashboard";
 import CreatorDashboard from "./pages/CreatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import StartJourney from "./pages/StartJourney";
+import ForgotPassword from "./pages/ForgotPassword";
+import Pricing from "./pages/Pricing";
+import Projects from "./pages/Projects";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +40,9 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/start-journey" element={<StartJourney />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/projects" element={<Projects />} />
 
             {/* Protected Student Routes */}
             <Route

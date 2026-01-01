@@ -14,10 +14,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Explore" },
-  { href: "/shop", label: "Shop" },
-  { href: "/about", label: "About" },
+  { href: "/explore", label: "Programs" },
+  { href: "/start-journey", label: "Paths" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/projects", label: "Projects" },
 ];
 
 export function Navbar() {

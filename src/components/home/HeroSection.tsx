@@ -53,9 +53,7 @@ function VideoCard({ card }: { card: typeof videoCards[0] }) {
 
   return (
     <article
-      className={`group relative flex-shrink-0 w-[423px] h-[580px] overflow-hidden rounded-lg bg-background ${
-        card.offset ? "mt-12" : ""
-      }`}
+      className="group relative flex-shrink-0 w-[300px] h-[420px] md:w-[423px] md:h-[580px] overflow-hidden rounded-lg bg-background"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
