@@ -1,6 +1,8 @@
 import { SeriesCard } from "@/components/series/SeriesCard";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 const featuredSeries = [
   {
@@ -47,6 +49,18 @@ const featuredSeries = [
 ];
 
 export function FeaturedSeries() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = 320;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section className="py-20">
       <div className="container-cinematic">
@@ -56,21 +70,42 @@ export function FeaturedSeries() {
             <h2 className="section-title">Continue Watching</h2>
             <p className="text-muted-foreground">Pick up where you left off</p>
           </div>
-          <Link 
-            to="/explore" 
-            className="hidden md:flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors group"
-          >
-            View All
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => scroll("left")}
+              className="hidden md:flex h-10 w-10 rounded-full border border-border/50 hover:border-primary/50 hover:bg-primary/10"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => scroll("right")}
+              className="hidden md:flex h-10 w-10 rounded-full border border-border/50 hover:border-primary/50 hover:bg-primary/10"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+            <Link 
+              to="/explore" 
+              className="hidden md:flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors group ml-2"
+            >
+              View All
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Horizontal Scroll */}
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4"
+        >
           {featuredSeries.map((series, index) => (
             <div
               key={series.id}
-              className="animate-fade-up"
+              className="flex-shrink-0 w-[280px] md:w-[300px] animate-fade-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <SeriesCard {...series} />
